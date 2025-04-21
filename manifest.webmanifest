@@ -1,0 +1,1 @@
+{"name":"Моите рецепти","short_name":"Рецепти","description":"Моето уютно място за рецепти","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#a7f3d0","lang":"en","scope":"/my-recipes-app/","icons":[{"src":"pwa-icon-192.png","sizes":"192x192","type":"image/png"},{"src":"pwa-icon-512.png","sizes":"512x512","type":"image/png"}]}
