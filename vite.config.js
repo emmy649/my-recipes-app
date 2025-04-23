@@ -9,12 +9,12 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Моите рецепти',
-        short_name: 'Рецепти',
+        name: 'Моите текстове',
+        short_name: 'Текстове',
         start_url: '/my-recipes-app/',
         display: 'standalone',
         background_color: '#ffffff',
-        theme_color: '#c9f7c9',
+        theme_color: 'bg-white',
         icons: [
           {
             src: 'pwa-icon-192.png',
