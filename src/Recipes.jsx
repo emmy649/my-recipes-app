@@ -1,25 +1,14 @@
 import { useEffect, useState } from "react";
 
-function Recipes({ goBack }) {
-  const [recipes, setRecipes] = useState([]);
+function Recipes({ goBack, recipes, setRecipes }) {
   const [selected, setSelected] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [editRecipe, setEditRecipe] = useState(null);
   const [editName, setEditName] = useState("");
-  const [editIngredients, setEditIngredients] = useState("");
-  const [editInstructions, setEditInstructions] = useState("");
-
-  useEffect(() => {
-    const stored = localStorage.getItem("recipes");
-    if (stored) {
-      setRecipes(JSON.parse(stored));
-    }
-  }, []);
+  const [editText, setEditText] = useState("");
 
   const filteredRecipes = recipes.filter((r) =>
-    `${r.name} ${r.ingredients} ${r.instructions}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+    `${r.name} ${r.text}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDelete = (id) => {
@@ -31,16 +20,13 @@ function Recipes({ goBack }) {
   const openEdit = (recipe) => {
     setEditRecipe(recipe);
     setEditName(recipe.name);
-    setEditIngredients(recipe.ingredients);
-    setEditInstructions(recipe.instructions);
+    setEditText(recipe.text);
   };
 
   const saveEdit = (e) => {
     e.preventDefault();
     const updated = recipes.map((r) =>
-      r.id === editRecipe.id
-        ? { ...r, name: editName, ingredients: editIngredients, instructions: editInstructions }
-        : r
+      r.id === editRecipe.id ? { ...r, name: editName, text: editText } : r
     );
     setRecipes(updated);
     localStorage.setItem("recipes", JSON.stringify(updated));
@@ -48,7 +34,7 @@ function Recipes({ goBack }) {
   };
 
   return (
-    <div className="min-h-screen p-6 relative bg-gradient-to-br from-[#303730] via-[#f0fff4] to-[#d2cecc]">
+    <div className="min-h-screen p-6 relative bg-gradient-to-br from-[#303730] via-[#ebf5ed] to-[#303730]">
       <button
         onClick={goBack}
         className="fixed top-6 left-6 z-50 bg-white text--600 w-12 h-12 rounded-full shadow-md text-2xl flex items-center justify-center hover:scale-110 transition"
@@ -63,10 +49,10 @@ function Recipes({ goBack }) {
       <div className="max-w-md mx-auto mb-8">
         <input
           type="text"
-          placeholder="Търси по име, текст или забележки..."
+          placeholder="Търси по заглавие или текст..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-3 rounded border border-green-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="w-full p-3 rounded border border-green-200 focus:outline-none focus:ring-2 focus:ring-green-200"
         />
       </div>
 
@@ -81,20 +67,25 @@ function Recipes({ goBack }) {
               onClick={() => setSelected(r)}
             >
               <button
-                onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(r.id);
+                }}
                 className="absolute top-2 right-2 z-10 bg-red-50 text-red-600 w-7 h-7 rounded-full flex items-center justify-center text-sm shadow hover:bg-red-100 opacity-0 group-hover:opacity-100 transition"
               >
                 ×
               </button>
               <button
-                onClick={(e) => { e.stopPropagation(); openEdit(r); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(r);
+                }}
                 className="absolute top-2 right-10 z-10 bg-green-50 text-600 w-7 h-7 rounded-full flex items-center justify-center text-sm shadow hover:bg-green-100 opacity-0 group-hover:opacity-100 transition"
               >
                 ✎
               </button>
-
-              <h2 className="text-xl font-bold - italic text-600 mb-2">{r.name}</h2>
-              <p className="text-gray-600 text-sm line-clamp-3">{r.ingredients}</p>
+              <h2 className="text-xl font-bold italic text-600 mb-2">{r.name}</h2>
+              <p className="text-gray-600 text-sm line-clamp-3">{r.text}</p>
             </div>
           ))}
         </div>
@@ -102,12 +93,9 @@ function Recipes({ goBack }) {
 
       {selected && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-xl">
-            <h2 className="text-2xl font-semibold - italic  text-700 mb-4">{selected.name}</h2>
-            <h3 className="font-bold mb-1">Текст:</h3>
-            <p className="mb-3 whitespace-pre-wrap">{selected.ingredients}</p>
-            <h3 className="font-bold mb-1">Забележка:</h3>
-            <p className="whitespace-pre-wrap">{selected.instructions}</p>
+          <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-xl max-h-[90vh] overflow-y-auto scrollbar-hide">
+            <h2 className="text-2xl font-semibold italic text-700 mb-4">{selected.name}</h2>
+            <p className="whitespace-pre-wrap text-gray-800">{selected.text}</p>
             <div className="text-right mt-4">
               <button onClick={() => setSelected(null)} className="text-600 hover:underline">
                 Затвори
@@ -130,29 +118,17 @@ function Recipes({ goBack }) {
                 required
               />
               <textarea
-                value={editIngredients}
-                onChange={(e) => setEditIngredients(e.target.value)}
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
                 className="w-full mb-3 p-2 border rounded"
-                required
-              ></textarea>
-              <textarea
-                value={editInstructions}
-                onChange={(e) => setEditInstructions(e.target.value)}
-                className="w-full mb-3 p-2 border rounded"
+                rows={6}
                 required
               ></textarea>
               <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setEditRecipe(null)}
-                  className="text-gray-500"
-                >
+                <button type="button" onClick={() => setEditRecipe(null)} className="text-gray-500">
                   Отказ
                 </button>
-                <button
-                  type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                >
+                <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
                   Запази
                 </button>
               </div>
