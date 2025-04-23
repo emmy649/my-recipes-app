@@ -3,19 +3,18 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/my-recipes-app/',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Моите рецепти',
         short_name: 'Рецепти',
-        description: 'Моето уютно място за рецепти',
-        theme_color: '#a7f3d0',
-        background_color: '#ffffff',
+        start_url: '/my-recipes-app/',
         display: 'standalone',
-        start_url: '/',
+        background_color: '#ffffff',
+        theme_color: '#c9f7c9',
         icons: [
           {
             src: 'pwa-icon-192.png',
