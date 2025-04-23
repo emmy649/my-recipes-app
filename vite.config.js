@@ -14,7 +14,7 @@ export default defineConfig({
         start_url: '/my-recipes-app/',
         display: 'standalone',
         background_color: '#ffffff',
-        theme_color: 'bg-white',
+        theme_color: "#ffffff",
         icons: [
           {
             src: 'pwa-icon-192.png',
